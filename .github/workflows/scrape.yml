@@ -1,0 +1,56 @@
+name: Auto Scrape — Local Knowledge Hub
+
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "เหตุผลที่รันด้วยตนเอง (optional)"
+        required: false
+        default: "Manual trigger"
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: 🐍 Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: 📦 Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install requests beautifulsoup4 lxml
+
+      - name: 🔄 Run scraper
+        id: scraper
+        run: |
+          python scraper.py 2>&1 | tee scraper_log.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: 📋 Show scraper output
+        run: cat scraper_log.txt || true
+
+      - name: 💾 Commit updated index.html
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --staged --quiet && echo "ไม่มีบทความใหม่" && exit 0
+          DATE=$(date '+%Y-%m-%d %H:%M UTC')
+          git commit -m "🤖 auto-scrape ${DATE}"
+          git push
