@@ -253,6 +253,41 @@ def main():
         print(f"✅ +{added} ใหม่ ({len(arts)} ดึงมา)")
         time.sleep(1)  #礼貌 delay
 
+    # ── เติมรูปให้บทความเก่าที่ยังไม่มีรูป (WordPress sites) ──────────────────
+    WP_SITE_BASES = {s["id"]: s["url"].rstrip("/") for s in sites
+                     if SCRAPE_STRATEGY.get(s["id"]) == scrape_wordpress_api}
+    need_image = [a for a in existing if not a.get("image") and a["source"] in WP_SITE_BASES]
+    if need_image:
+        print(f"\n🖼  เติมรูปบทความเก่าที่ยังไม่มีรูป {len(need_image)} ชิ้น…")
+        enriched = 0
+        for art in need_image:
+            base = WP_SITE_BASES[art["source"]]
+            m_pid = re.search(r'[?&]p=(\d+)', art["url"])
+            if not m_pid:
+                continue
+            pid = m_pid.group(1)
+            try:
+                r1 = requests.get(f"{base}/wp-json/wp/v2/posts/{pid}",
+                                  params={"_fields": "featured_media"},
+                                  headers=HEADERS, timeout=8)
+                if r1.status_code != 200:
+                    continue
+                mid = r1.json().get("featured_media")
+                if not mid:
+                    continue
+                r2 = requests.get(f"{base}/wp-json/wp/v2/media/{mid}",
+                                  params={"_fields": "source_url"},
+                                  headers=HEADERS, timeout=8)
+                if r2.status_code == 200:
+                    url = r2.json().get("source_url")
+                    if url:
+                        art["image"] = url
+                        enriched += 1
+            except Exception:
+                pass
+            time.sleep(0.5)
+        print(f"   เติมรูปได้ {enriched} ชิ้น")
+
     # รวมบทความ: ใหม่อยู่บน, เก่าอยู่ล่าง
     all_articles = new_articles + existing
     print(f"\n✅ รวมบทความ: {len(existing)} เดิม + {len(new_articles)} ใหม่ = {len(all_articles)}")
