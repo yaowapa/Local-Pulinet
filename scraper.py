@@ -40,6 +40,23 @@ def guess_cat(title: str) -> str:
             return cat
     return "research"
 
+# คำสำคัญที่บ่งชี้ว่าบทความเกี่ยวกับข้อมูลท้องถิ่น
+LOCAL_KEYWORDS = [
+    "ท้องถิ่น","ชุมชน","พื้นบ้าน","ภูมิปัญญา","วัฒนธรรม","ประเพณี","ตำนาน","ประวัติ",
+    "ล้านนา","อีสาน","อิสาน","ภาคเหนือ","ภาคใต้","ภาคกลาง","ภาคอีสาน",
+    "อาหาร","แกง","ขนม","สมุนไพร","ยาพื้นบ้าน",
+    "ศิลปะ","หัตถกรรม","ผ้า","ทอ","ดนตรี","ฟ้อน","รำ","เพลง",
+    "วัด","โบราณสถาน","โบราณวัตถุ","ปราสาท","เจดีย์","พระ",
+    "ชนเผ่า","ชาติพันธุ์","กลุ่มชน","ชาวบ้าน","หมู่บ้าน",
+    "ป่า","สัตว์","พืช","ต้นไม้","แม่น้ำ","ภูเขา","ธรรมชาติ",
+    "มรดก","เรื่องเล่า","นิทาน","ความเชื่อ","พิธีกรรม",
+    "จังหวัด","อำเภอ","ตำบล","เมือง","แหล่ง",
+]
+
+def is_local_content(title: str) -> bool:
+    """ตรวจว่าบทความเกี่ยวกับข้อมูลท้องถิ่นหรือไม่"""
+    return any(k in title for k in LOCAL_KEYWORDS)
+
 def make_id(source: str, url: str) -> str:
     h = hashlib.md5(url.encode()).hexdigest()[:8]
     return f"{source}_{h}"
@@ -114,8 +131,12 @@ def scrape_html_links(site: dict) -> list:
             skip_titles = ["หน้าแรก","หน้าหลัก","ช่วยเหลือ","สถิติ","คู่มือ","เข้าสู่ระบบ","ออกจากระบบ",
                            "ติดต่อ","เกี่ยวกับ","ค้นหา","แผนผัง","นโยบาย","เงื่อนไข","cookies",
                            "home","help","login","logout","about","contact","search","sitemap",
-                           "next","prev","previous","read more","อ่านต่อ","ดูเพิ่ม","more"]
-            if any(t.lower() in text.lower() for t in skip_titles) and len(text) < 20:
+                           "next","prev","previous","read more","อ่านต่อ","ดูเพิ่ม","more",
+                           "รายละเอียด","detail","view","download","full text"]
+            if any(t.lower() in text.lower() for t in skip_titles) and len(text) < 30:
+                continue
+            # รับเฉพาะบทความที่เกี่ยวกับข้อมูลท้องถิ่น
+            if not is_local_content(text):
                 continue
             seen.add(href)
             results.append({
