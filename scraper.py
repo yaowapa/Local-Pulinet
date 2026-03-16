@@ -102,11 +102,20 @@ def scrape_html_links(site: dict) -> list:
             if href in seen or len(href) < 20:
                 continue
             # skip ลิงก์ที่เป็น navigation, login, etc.
-            skip_words = ["login","register","contact","about","search","javascript","#","mailto","tel:"]
-            if any(w in href.lower() for w in skip_words):
+            skip_url_words = ["login","register","contact","about","search","javascript","#","mailto","tel:",
+                              "logout","admin","wp-admin","feed","rss","sitemap","tag/","category/",
+                              "page/","author/","attachment/","?replytocom","comment","download","pdf"]
+            if any(w in href.lower() for w in skip_url_words):
                 continue
             text = a.get_text(strip=True)
-            if len(text) < 6 or len(text) > 200:
+            if len(text) < 10 or len(text) > 200:
+                continue
+            # skip ชื่อที่เป็น navigation / system (ไม่ใช่บทความเนื้อหา)
+            skip_titles = ["หน้าแรก","หน้าหลัก","ช่วยเหลือ","สถิติ","คู่มือ","เข้าสู่ระบบ","ออกจากระบบ",
+                           "ติดต่อ","เกี่ยวกับ","ค้นหา","แผนผัง","นโยบาย","เงื่อนไข","cookies",
+                           "home","help","login","logout","about","contact","search","sitemap",
+                           "next","prev","previous","read more","อ่านต่อ","ดูเพิ่ม","more"]
+            if any(t.lower() in text.lower() for t in skip_titles) and len(text) < 20:
                 continue
             seen.add(href)
             results.append({
