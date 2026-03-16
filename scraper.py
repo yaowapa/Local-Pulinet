@@ -139,10 +139,13 @@ def scrape_html_links(site: dict) -> list:
             if not is_local_content(text):
                 continue
             seen.add(href)
-            # ลองดึง og:image จากหน้าบทความ
+            # ตรวจสอบว่า link ยังใช้งานได้ + ดึง og:image
             img = None
             try:
                 ar = requests.get(href, headers=HEADERS, timeout=8)
+                if ar.status_code in (404, 410, 403):
+                    seen.discard(href)
+                    continue  # ข้าม link ที่ error
                 asoup = BeautifulSoup(ar.text, "html.parser")
                 og = asoup.find("meta", property="og:image") or asoup.find("meta", attrs={"name":"og:image"})
                 if og and og.get("content","").startswith("http"):
