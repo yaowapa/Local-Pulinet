@@ -1,0 +1,315 @@
+{
+  "version": "1.1",
+  "last_updated": "2026-03-06",
+  "sites": [
+    {
+      "id": "ssd",
+      "name": "Sansai Discovery",
+      "name_th": "สันทรายดิสคัฟเวอรี่",
+      "url": "https://archives.mju.ac.th/ssd/",
+      "region": "ภาคเหนือ",
+      "province": "เชียงใหม่",
+      "color": "#1b6ab5",
+      "icon": "🏔️",
+      "active": true,
+      "scrape_type": "wordpress",
+      "category_pages": [
+        {"url": "https://archives.mju.ac.th/ssd/?cat=146", "cat": "arts"},
+        {"url": "https://archives.mju.ac.th/ssd/?cat=145", "cat": "tradition"},
+        {"url": "https://archives.mju.ac.th/ssd/?cat=158", "cat": "tradition"},
+        {"url": "https://archives.mju.ac.th/ssd/?cat=144", "cat": "wisdom"},
+        {"url": "https://archives.mju.ac.th/ssd/?cat=217", "cat": "food"},
+        {"url": "https://archives.mju.ac.th/ssd/?cat=161", "cat": "food"},
+        {"url": "https://archives.mju.ac.th/ssd/?cat=153", "cat": "place"},
+        {"url": "https://archives.mju.ac.th/ssd/?cat=159", "cat": "nature"}
+      ]
+    },
+    {
+      "id": "esan",
+      "name": "Esanpedia",
+      "name_th": "สารสนเทศท้องถิ่นอีสาน",
+      "url": "https://www.esanpedia.oar.ubu.ac.th/localinformation/",
+      "region": "ภาคอีสาน",
+      "province": "อุบลราชธานี",
+      "color": "#8a5e00",
+      "icon": "🌾",
+      "active": true,
+      "scrape_type": "wordpress",
+      "category_pages": [
+        {"url": "https://www.esanpedia.oar.ubu.ac.th/localinformation/", "cat": "research"},
+        {"url": "https://www.esanpedia.oar.ubu.ac.th/localinformation/?cat=261", "cat": "arts"},
+        {"url": "https://www.esanpedia.oar.ubu.ac.th/localinformation/?cat=350", "cat": "research"}
+      ]
+    },
+    {
+      "id": "lanna_info",
+      "name": "Lanna Info CMU",
+      "name_th": "ล้านนาสารสนเทศ ม.เชียงใหม่",
+      "url": "https://lannainfo.library.cmu.ac.th/",
+      "region": "ภาคเหนือ",
+      "province": "เชียงใหม่",
+      "color": "#c62828",
+      "icon": "🏮",
+      "active": true,
+      "scrape_type": "generic",
+      "category_pages": [
+        {"url": "https://lannainfo.library.cmu.ac.th/", "cat": "arts"}
+      ]
+    },
+    {
+      "id": "cmu_dc",
+      "name": "CMU Digital Collections",
+      "name_th": "คลังสารสนเทศดิจิทัล ม.เชียงใหม่",
+      "url": "https://cmudc.library.cmu.ac.th/frontend/",
+      "region": "ภาคเหนือ",
+      "province": "เชียงใหม่",
+      "color": "#8b0000",
+      "icon": "📚",
+      "active": true,
+      "scrape_type": "generic",
+      "category_pages": [
+        {"url": "https://cmudc.library.cmu.ac.th/frontend/", "cat": "research"}
+      ]
+    },
+    {
+      "id": "mfu_cr",
+      "name": "MFU Chiangrai Local Knowledge",
+      "name_th": "ข้อมูลท้องถิ่นเชียงราย ม.แม่ฟ้าหลวง",
+      "url": "https://sites.google.com/mfu.ac.th/chiangrai/home",
+      "region": "ภาคเหนือ",
+      "province": "เชียงราย",
+      "color": "#880e4f",
+      "icon": "⛰️",
+      "active": true,
+      "scrape_type": "generic",
+      "category_pages": [
+        {"url": "https://sites.google.com/mfu.ac.th/chiangrai/home", "cat": "place"}
+      ]
+    },
+    {
+      "id": "mju_food",
+      "name": "MJU Local Food",
+      "name_th": "อาหารท้องถิ่นล้านนา ม.แม่โจ้",
+      "url": "https://archives.mju.ac.th/localfood/",
+      "region": "ภาคเหนือ",
+      "province": "เชียงใหม่",
+      "color": "#e65100",
+      "icon": "🍜",
+      "active": true,
+      "scrape_type": "wordpress",
+      "category_pages": [
+        {"url": "https://archives.mju.ac.th/localfood/", "cat": "food"}
+      ]
+    },
+    {
+      "id": "mju_museum",
+      "name": "MJU Museum",
+      "name_th": "พิพิธภัณฑ์ ม.แม่โจ้",
+      "url": "http://museum.mju.ac.th/",
+      "region": "ภาคเหนือ",
+      "province": "เชียงใหม่",
+      "color": "#5d4037",
+      "icon": "🏛️",
+      "active": true,
+      "scrape_type": "generic",
+      "category_pages": [
+        {"url": "http://museum.mju.ac.th/", "cat": "arts"}
+      ]
+    },
+    {
+      "id": "up_local",
+      "name": "UP Local Database",
+      "name_th": "ฐานข้อมูลท้องถิ่น ม.พะเยา",
+      "url": "http://www.clm.up.ac.th/project/local_database",
+      "region": "ภาคเหนือ",
+      "province": "พะเยา",
+      "color": "#0277bd",
+      "icon": "🦢",
+      "active": true,
+      "scrape_type": "generic",
+      "category_pages": [
+        {"url": "http://www.clm.up.ac.th/project/local_database", "cat": "research"}
+      ]
+    },
+    {
+      "id": "kku_archive",
+      "name": "KKU Archive",
+      "name_th": "คลังข้อมูล ม.ขอนแก่น",
+      "url": "https://archive.kku.ac.th",
+      "region": "ภาคอีสาน",
+      "province": "ขอนแก่น",
+      "color": "#4e342e",
+      "icon": "📦",
+      "active": true,
+      "scrape_type": "generic",
+      "category_pages": [
+        {"url": "https://archive.kku.ac.th", "cat": "research"}
+      ]
+    },
+    {
+      "id": "msu_isan",
+      "name": "MSU Isan Center",
+      "name_th": "ศูนย์สารสนเทศอีสาน ม.มหาสารคาม",
+      "url": "https://library.msu.ac.th/isancenter/",
+      "region": "ภาคอีสาน",
+      "province": "มหาสารคาม",
+      "color": "#6a1b9a",
+      "icon": "🌺",
+      "active": true,
+      "scrape_type": "generic",
+      "category_pages": [
+        {"url": "https://library.msu.ac.th/isancenter/", "cat": "research"}
+      ]
+    },
+    {
+      "id": "isannaru",
+      "name": "Isan Naru",
+      "name_th": "อีสานนารู",
+      "url": "http://202.28.32.113/isannaru/",
+      "region": "ภาคอีสาน",
+      "province": "มหาสารคาม",
+      "color": "#f57c00",
+      "icon": "🌿",
+      "active": true,
+      "scrape_type": "generic",
+      "category_pages": [
+        {"url": "http://202.28.32.113/isannaru/", "cat": "wisdom"}
+      ]
+    },
+    {
+      "id": "esan_info",
+      "name": "Esanpedia Esaninfo",
+      "name_th": "สารานุกรมอีสาน",
+      "url": "https://www.esanpedia.oar.ubu.ac.th/esaninfo",
+      "region": "ภาคอีสาน",
+      "province": "อุบลราชธานี",
+      "color": "#558b2f",
+      "icon": "📖",
+      "active": true,
+      "scrape_type": "wordpress",
+      "category_pages": [
+        {"url": "https://www.esanpedia.oar.ubu.ac.th/esaninfo", "cat": "research"}
+      ]
+    },
+    {
+      "id": "sut_korat",
+      "name": "SUT Korat Data",
+      "name_th": "ข้อมูลโคราช ม.เทคโนโลยีสุรนารี",
+      "url": "http://nm.sut.ac.th/koratdata/",
+      "region": "ภาคอีสาน",
+      "province": "นครราชสีมา",
+      "color": "#00695c",
+      "icon": "🐘",
+      "active": true,
+      "scrape_type": "generic",
+      "category_pages": [
+        {"url": "http://nm.sut.ac.th/koratdata/", "cat": "research"}
+      ]
+    },
+    {
+      "id": "su_west",
+      "name": "Silpakorn West",
+      "name_th": "สารสนเทศท้องถิ่นภาคตะวันตก ม.ศิลปากร",
+      "url": "http://www.snc.lib.su.ac.th/westweb",
+      "region": "ภาคตะวันตก",
+      "province": "นครปฐม",
+      "color": "#4a148c",
+      "icon": "⛩️",
+      "active": true,
+      "scrape_type": "generic",
+      "category_pages": [
+        {"url": "http://www.snc.lib.su.ac.th/westweb", "cat": "research"}
+      ]
+    },
+    {
+      "id": "stou_nont",
+      "name": "STOU Nonthaburi",
+      "name_th": "ข้อมูลท้องถิ่นนนทบุรี ม.สุโขทัยธรรมาธิราช",
+      "url": "https://library.stou.ac.th/nonthaburi-study/website",
+      "region": "ภาคกลาง",
+      "province": "นนทบุรี",
+      "color": "#bf360c",
+      "icon": "🏠",
+      "active": true,
+      "scrape_type": "generic",
+      "category_pages": [
+        {"url": "https://library.stou.ac.th/nonthaburi-study/website", "cat": "research"}
+      ]
+    },
+    {
+      "id": "stou_digital",
+      "name": "STOU Digital Library",
+      "name_th": "ห้องสมุดดิจิทัล ม.สุโขทัยธรรมาธิราช",
+      "url": "https://digitallib.stou.ac.th/",
+      "region": "ภาคกลาง",
+      "province": "นนทบุรี",
+      "color": "#37474f",
+      "icon": "💻",
+      "active": true,
+      "scrape_type": "generic",
+      "category_pages": [
+        {"url": "https://digitallib.stou.ac.th/", "cat": "research"}
+      ]
+    },
+    {
+      "id": "buu_lib",
+      "name": "BUU Local Knowledge",
+      "name_th": "ภูมิปัญญาท้องถิ่น ม.บูรพา",
+      "url": "https://www.lib.buu.ac.th/",
+      "region": "ภาคตะวันออก",
+      "province": "ชลบุรี",
+      "color": "#1565c0",
+      "icon": "🌊",
+      "active": true,
+      "scrape_type": "generic",
+      "category_pages": [
+        {"url": "https://www.lib.buu.ac.th/", "cat": "research"}
+      ]
+    },
+    {
+      "id": "pattani_heritage",
+      "name": "Pattani Heritage City",
+      "name_th": "เมืองมรดกปัตตานี ม.สงขลานครินทร์",
+      "url": "https://pattaniheritagecity.psu.ac.th/",
+      "region": "ภาคใต้",
+      "province": "ปัตตานี",
+      "color": "#2e7d32",
+      "icon": "🕌",
+      "active": true,
+      "scrape_type": "generic",
+      "category_pages": [
+        {"url": "https://pattaniheritagecity.psu.ac.th/", "cat": "place"}
+      ]
+    },
+    {
+      "id": "psu_south",
+      "name": "PSU Southern Info",
+      "name_th": "สารสนเทศภาคใต้ ม.สงขลานครินทร์",
+      "url": "https://clib.psu.ac.th/southerninfo/",
+      "region": "ภาคใต้",
+      "province": "สงขลา",
+      "color": "#006064",
+      "icon": "🐠",
+      "active": true,
+      "scrape_type": "generic",
+      "category_pages": [
+        {"url": "https://clib.psu.ac.th/southerninfo/", "cat": "research"}
+      ]
+    },
+    {
+      "id": "wu_lib",
+      "name": "Walailak Local Knowledge",
+      "name_th": "ภูมิปัญญาท้องถิ่น ม.วลัยลักษณ์",
+      "url": "https://library.wu.ac.th/",
+      "region": "ภาคใต้",
+      "province": "นครศรีธรรมราช",
+      "color": "#1b5e20",
+      "icon": "🌴",
+      "active": true,
+      "scrape_type": "generic",
+      "category_pages": [
+        {"url": "https://library.wu.ac.th/", "cat": "research"}
+      ]
+    }
+  ]
+}

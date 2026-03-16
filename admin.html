@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Panel — Local Knowledge Hub</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:#f0f4f8;color:#1a202c;min-height:100vh}
+
+/* ── Header ── */
+header{background:linear-gradient(135deg,#2d3748,#4a5568);color:#fff;padding:16px 24px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+header h1{font-size:1.2rem;font-weight:700}
+header .badge{background:#e53e3e;color:#fff;font-size:.7rem;padding:2px 8px;border-radius:999px;font-weight:700}
+.header-spacer{flex:1}
+#btn-open-hub{background:#4299e1;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:.85rem;text-decoration:none}
+#btn-open-hub:hover{background:#3182ce}
+
+/* ── Layout ── */
+.container{max-width:1400px;margin:24px auto;padding:0 16px;display:grid;grid-template-columns:260px 1fr;gap:20px}
+
+/* ── Sidebar ── */
+.sidebar{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.1);height:fit-content;position:sticky;top:20px}
+.sidebar h2{font-size:.9rem;font-weight:700;color:#718096;text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px}
+.sidebar nav{display:flex;flex-direction:column;gap:4px}
+.nav-btn{background:none;border:none;text-align:left;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:.9rem;color:#4a5568;display:flex;align-items:center;gap:8px;transition:background .15s}
+.nav-btn:hover,.nav-btn.active{background:#ebf8ff;color:#2b6cb0;font-weight:600}
+.nav-btn span.icon{font-size:1.1rem;width:20px}
+.sidebar hr{border:none;border-top:1px solid #e2e8f0;margin:16px 0}
+.stat-row{display:flex;justify-content:space-between;font-size:.82rem;color:#718096;padding:4px 0}
+.stat-row strong{color:#2d3748}
+
+/* ── Main content area ── */
+.main{display:flex;flex-direction:column;gap:20px}
+
+/* ── Panel sections ── */
+.panel{background:#fff;border-radius:12px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.panel-header h2{font-size:1.05rem;font-weight:700;color:#2d3748}
+.section{display:none}
+.section.active{display:block}
+
+/* ── Toolbar ── */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.toolbar input[type=text]{flex:1;min-width:200px;padding:8px 14px;border:1px solid #cbd5e0;border-radius:8px;font-size:.9rem;outline:none}
+.toolbar input:focus{border-color:#4299e1;box-shadow:0 0 0 3px rgba(66,153,225,.15)}
+.toolbar select{padding:8px 12px;border:1px solid #cbd5e0;border-radius:8px;font-size:.85rem;background:#fff;cursor:pointer}
+.btn{padding:8px 16px;border:none;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
+.btn-primary{background:#4299e1;color:#fff}.btn-primary:hover{background:#3182ce}
+.btn-success{background:#48bb78;color:#fff}.btn-success:hover{background:#38a169}
+.btn-danger {background:#f56565;color:#fff}.btn-danger:hover{background:#e53e3e}
+.btn-warning{background:#ed8936;color:#fff}.btn-warning:hover{background:#dd6b20}
+.btn-ghost  {background:#edf2f7;color:#4a5568}.btn-ghost:hover{background:#e2e8f0}
+
+/* ── Table ── */
+.table-wrap{overflow-x:auto;border-radius:8px;border:1px solid #e2e8f0}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+thead th{background:#f7fafc;color:#718096;font-weight:700;padding:10px 12px;text-align:left;border-bottom:2px solid #e2e8f0;white-space:nowrap}
+tbody tr{border-bottom:1px solid #f0f4f8;transition:background .1s}
+tbody tr:hover{background:#f7fafc}
+tbody td{padding:8px 12px;vertical-align:middle;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.check-col{width:36px;text-align:center}
+input[type=checkbox]{width:16px;height:16px;cursor:pointer}
+.cat-badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.72rem;font-weight:700;text-transform:uppercase}
+.cat-food{background:#fff3cd;color:#856404}
+.cat-tradition{background:#d1ecf1;color:#0c5460}
+.cat-arts{background:#f8d7da;color:#721c24}
+.cat-wisdom{background:#d4edda;color:#155724}
+.cat-place{background:#cce5ff;color:#004085}
+.cat-nature{background:#d1f2eb;color:#0b5345}
+.cat-research{background:#e2e3e5;color:#383d41}
+.source-tag{color:#4299e1;font-size:.78rem;font-weight:600}
+.img-thumb{width:40px;height:40px;border-radius:6px;object-fit:cover;background:#f0f4f8}
+.img-placeholder{width:40px;height:40px;border-radius:6px;background:#edf2f7;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:#a0aec0}
+.action-btns{display:flex;gap:4px}
+.btn-sm{padding:4px 10px;font-size:.78rem;border-radius:6px}
+
+/* ── Pagination ── */
+.pagination{display:flex;gap:4px;align-items:center;justify-content:flex-end;margin-top:12px;flex-wrap:wrap}
+.page-btn{padding:6px 10px;border:1px solid #e2e8f0;background:#fff;border-radius:6px;cursor:pointer;font-size:.82rem;color:#4a5568;min-width:36px;text-align:center}
+.page-btn:hover{background:#edf2f7}
+.page-btn.active{background:#4299e1;color:#fff;border-color:#4299e1}
+.page-info{font-size:.82rem;color:#718096;margin-left:8px}
+
+/* ── Modal ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:14px;padding:28px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal h3{font-size:1.1rem;font-weight:700;margin-bottom:20px;color:#2d3748}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:.82rem;font-weight:600;color:#4a5568;margin-bottom:5px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:8px 12px;border:1px solid #cbd5e0;border-radius:8px;font-size:.88rem;outline:none;font-family:inherit}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#4299e1;box-shadow:0 0 0 3px rgba(66,153,225,.15)}
+.form-group textarea{resize:vertical;min-height:70px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+
+/* ── JSON editor ── */
+.json-area{width:100%;min-height:300px;font-family:'Courier New',monospace;font-size:.8rem;border:1px solid #cbd5e0;border-radius:8px;padding:12px;outline:none;resize:vertical;background:#f7fafc;color:#2d3748}
+.json-area:focus{border-color:#4299e1}
+
+/* ── Stats cards ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px}
+.stat-card{background:#f7fafc;border-radius:10px;padding:16px;text-align:center;border:1px solid #e2e8f0}
+.stat-card .val{font-size:2rem;font-weight:800;color:#2b6cb0;line-height:1}
+.stat-card .lbl{font-size:.78rem;color:#718096;margin-top:4px}
+
+/* ── Toast ── */
+#toast{position:fixed;bottom:24px;right:24px;background:#48bb78;color:#fff;padding:12px 20px;border-radius:10px;font-size:.9rem;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.2);opacity:0;transform:translateY(20px);transition:all .3s;z-index:2000;pointer-events:none}
+#toast.show{opacity:1;transform:translateY(0)}
+#toast.error{background:#e53e3e}
+
+/* ── Import area ── */
+.drop-zone{border:2px dashed #cbd5e0;border-radius:10px;padding:32px;text-align:center;color:#a0aec0;transition:all .2s;cursor:pointer}
+.drop-zone:hover,.drop-zone.drag-over{border-color:#4299e1;background:#ebf8ff;color:#2b6cb0}
+.drop-zone .icon{font-size:2.5rem;margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<header>
+  <span style="font-size:1.4rem">🏛</span>
+  <h1>Local Knowledge Hub <span class="badge">ADMIN</span></h1>
+  <div class="header-spacer"></div>
+  <a id="btn-open-hub" href="index.html" target="_blank">🔗 เปิดเว็บหลัก</a>
+</header>
+
+<div class="container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2>เมนู</h2>
+    <nav>
+      <button class="nav-btn active" onclick="showSection('articles')">
+        <span class="icon">📄</span> จัดการบทความ
+      </button>
+      <button class="nav-btn" onclick="showSection('add')">
+        <span class="icon">➕</span> เพิ่มบทความใหม่
+      </button>
+      <button class="nav-btn" onclick="showSection('import')">
+        <span class="icon">📥</span> Import / Export
+      </button>
+      <button class="nav-btn" onclick="showSection('sites')">
+        <span class="icon">🌐</span> รายการเว็บไซต์
+      </button>
+    </nav>
+    <hr>
+    <h2>สถิติ</h2>
+    <div class="stat-row"><span>บทความทั้งหมด</span><strong id="stat-total">—</strong></div>
+    <div class="stat-row"><span>มีรูปภาพ</span><strong id="stat-img">—</strong></div>
+    <div class="stat-row"><span>มีพิกัด</span><strong id="stat-coord">—</strong></div>
+    <div class="stat-row"><span>เว็บที่เชื่อมต่อ</span><strong id="stat-sites">—</strong></div>
+    <hr>
+    <button class="btn btn-success" style="width:100%" onclick="saveToHTML()">💾 บันทึก index.html</button>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- ── Section: Articles ── -->
+    <div id="sec-articles" class="section active">
+      <div class="panel">
+        <div class="panel-header">
+          <h2>📄 บทความทั้งหมด</h2>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-danger btn-sm" onclick="deleteSelected()">🗑 ลบที่เลือก</button>
+            <button class="btn btn-primary btn-sm" onclick="showSection('add')">➕ เพิ่มใหม่</button>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <input type="text" id="search-input" placeholder="🔍 ค้นหาชื่อบทความ…" oninput="filterArticles()">
+          <select id="filter-cat" onchange="filterArticles()">
+            <option value="">ทุกหมวด</option>
+            <option value="food">อาหาร</option>
+            <option value="tradition">ประเพณี</option>
+            <option value="arts">ศิลปะ</option>
+            <option value="wisdom">ภูมิปัญญา</option>
+            <option value="place">สถานที่</option>
+            <option value="nature">ธรรมชาติ</option>
+            <option value="research">วิจัย</option>
+          </select>
+          <select id="filter-source" onchange="filterArticles()">
+            <option value="">ทุกเว็บ</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" onclick="clearFilters()">✕ ล้าง</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="check-col"><input type="checkbox" id="check-all" onchange="toggleAll(this)"></th>
+                <th>รูป</th>
+                <th>ชื่อบทความ</th>
+                <th>หมวด</th>
+                <th>เว็บ</th>
+                <th>วันที่</th>
+                <th>พิกัด</th>
+                <th>จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="articles-tbody"></tbody>
+          </table>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;flex-wrap:wrap;gap:8px">
+          <div id="page-info" class="page-info"></div>
+          <div id="pagination" class="pagination"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section: Add/Edit ── -->
+    <div id="sec-add" class="section">
+      <div class="panel">
+        <div class="panel-header">
+          <h2 id="form-title">➕ เพิ่มบทความใหม่</h2>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>ชื่อบทความ *</label>
+            <input type="text" id="f-title" placeholder="ชื่อบทความ">
+          </div>
+          <div class="form-group">
+            <label>URL บทความ *</label>
+            <input type="url" id="f-url" placeholder="https://...">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>แหล่งที่มา (source ID)</label>
+            <select id="f-source"></select>
+          </div>
+          <div class="form-group">
+            <label>หมวดหมู่</label>
+            <select id="f-cat">
+              <option value="research">วิจัย / อื่นๆ</option>
+              <option value="food">อาหาร</option>
+              <option value="tradition">ประเพณี</option>
+              <option value="arts">ศิลปะ / ดนตรี</option>
+              <option value="wisdom">ภูมิปัญญา</option>
+              <option value="place">สถานที่</option>
+              <option value="nature">ธรรมชาติ</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>คำอธิบายสั้น (excerpt)</label>
+          <textarea id="f-excerpt" placeholder="สรุปเนื้อหา…"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>URL รูปภาพ</label>
+            <input type="url" id="f-image" placeholder="https://...">
+          </div>
+          <div class="form-group">
+            <label>วันที่ (YYYY-MM-DD)</label>
+            <input type="date" id="f-date">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>ละติจูด (lat)</label>
+            <input type="number" id="f-lat" step="0.001" placeholder="เช่น 18.796">
+          </div>
+          <div class="form-group">
+            <label>ลองจิจูด (lng)</label>
+            <input type="number" id="f-lng" step="0.001" placeholder="เช่น 98.972">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>แท็ก (คั่นด้วย ,)</label>
+          <input type="text" id="f-tags" placeholder="วัฒนธรรม, อีสาน, ประเพณี">
+        </div>
+        <input type="hidden" id="f-edit-id">
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn btn-success" onclick="saveArticle()">💾 บันทึกบทความ</button>
+          <button class="btn btn-ghost" onclick="clearForm()">✕ ล้างฟอร์ม</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section: Import/Export ── -->
+    <div id="sec-import" class="section">
+      <div class="panel" style="margin-bottom:20px">
+        <div class="panel-header"><h2>📤 Export</h2></div>
+        <p style="font-size:.9rem;color:#4a5568;margin-bottom:16px">ดาวน์โหลด ARTICLES_DATA เป็นไฟล์ JSON เพื่อสำรองข้อมูลหรือแก้ไขด้วยโปรแกรมอื่น</p>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="exportJSON()">⬇️ Export JSON</button>
+          <button class="btn btn-ghost" onclick="showJsonEditor()">👁 ดู / แก้ไข JSON</button>
+        </div>
+        <div id="json-editor-wrap" style="display:none;margin-top:16px">
+          <p style="font-size:.8rem;color:#718096;margin-bottom:6px">แก้ไข JSON โดยตรง แล้วกด "นำเข้า JSON นี้"</p>
+          <textarea class="json-area" id="json-editor" spellcheck="false"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn btn-warning" onclick="importFromEditor()">📥 นำเข้า JSON นี้</button>
+            <button class="btn btn-ghost" onclick="document.getElementById('json-editor-wrap').style.display='none'">ปิด</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><h2>📥 Import JSON</h2></div>
+        <p style="font-size:.9rem;color:#4a5568;margin-bottom:16px">นำเข้าไฟล์ JSON ที่ export มา (จะ merge กับบทความที่มีอยู่ โดยไม่ลบซ้ำ)</p>
+        <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+          <div class="icon">📁</div>
+          <p>คลิกเพื่อเลือกไฟล์ หรือลากไฟล์ .json มาวาง</p>
+          <p style="font-size:.78rem;margin-top:4px">รองรับไฟล์ .json เท่านั้น</p>
+          <input type="file" id="file-input" accept=".json" style="display:none" onchange="importFile(this)">
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section: Sites ── -->
+    <div id="sec-sites" class="section">
+      <div class="panel">
+        <div class="panel-header"><h2>🌐 เว็บไซต์ที่เชื่อมต่อ</h2></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>รหัส</th><th>ชื่อ (ไทย)</th><th>ชื่อ (อังกฤษ)</th>
+                <th>ภูมิภาค</th><th>จำนวนบทความ</th><th>เปิดเว็บ</th>
+              </tr>
+            </thead>
+            <tbody id="sites-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /container -->
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+//  Load data from index.html
+// ══════════════════════════════════════════════
+let ARTICLES = [];
+let SITES    = [];
+let editingId = null;
+
+// Pagination
+let PAGE = 1;
+const PER_PAGE = 15;
+let filtered = [];
+
+function loadFromIndexHTML() {
+  // Try to fetch index.html from same folder
+  fetch("index.html")
+    .then(r => r.text())
+    .then(html => {
+      // Parse ARTICLES_DATA
+      const m1 = html.match(/<script id="ARTICLES_DATA" type="application\/json">\s*([\s\S]*?)\s*<\/script>/);
+      if (m1) ARTICLES = JSON.parse(m1[1]);
+
+      // Parse SITES_CONFIG
+      const m2 = html.match(/<script id="SITES_CONFIG" type="application\/json">\s*([\s\S]*?)\s*<\/script>/);
+      if (m2) SITES = JSON.parse(m2[1]);
+
+      initUI();
+    })
+    .catch(err => {
+      console.warn("ไม่สามารถโหลด index.html:", err);
+      // Demo data if can't load
+      ARTICLES = [];
+      SITES = [];
+      initUI();
+      showToast("⚠️ ไม่พบ index.html — ทำงานในโหมด Demo", "error");
+    });
+}
+
+function initUI() {
+  updateStats();
+  populateSourceFilter();
+  populateSiteSelect();
+  renderSites();
+  filterArticles();
+}
+
+// ══════════════════════════════════════════════
+//  Stats
+// ══════════════════════════════════════════════
+function updateStats() {
+  document.getElementById("stat-total").textContent = ARTICLES.length;
+  document.getElementById("stat-img").textContent = ARTICLES.filter(a => a.image).length;
+  document.getElementById("stat-coord").textContent = ARTICLES.filter(a => a.lat && a.lng).length;
+  document.getElementById("stat-sites").textContent = SITES.length;
+}
+
+// ══════════════════════════════════════════════
+//  Navigation
+// ══════════════════════════════════════════════
+function showSection(id) {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById("sec-" + id).classList.add("active");
+  const idx = ["articles","add","import","sites"].indexOf(id);
+  document.querySelectorAll(".nav-btn")[idx]?.classList.add("active");
+}
+
+// ══════════════════════════════════════════════
+//  Article Table
+// ══════════════════════════════════════════════
+const CAT_TH = {food:"อาหาร",tradition:"ประเพณี",arts:"ศิลปะ",wisdom:"ภูมิปัญญา",place:"สถานที่",nature:"ธรรมชาติ",research:"วิจัย"};
+
+function filterArticles() {
+  const q   = document.getElementById("search-input").value.toLowerCase();
+  const cat = document.getElementById("filter-cat").value;
+  const src = document.getElementById("filter-source").value;
+  filtered = ARTICLES.filter(a => {
+    if (q   && !a.title.toLowerCase().includes(q)) return false;
+    if (cat && a.cat !== cat) return false;
+    if (src && a.source !== src) return false;
+    return true;
+  });
+  PAGE = 1;
+  renderTable();
+}
+
+function clearFilters() {
+  document.getElementById("search-input").value = "";
+  document.getElementById("filter-cat").value = "";
+  document.getElementById("filter-source").value = "";
+  filterArticles();
+}
+
+function renderTable() {
+  const tbody = document.getElementById("articles-tbody");
+  const total = filtered.length;
+  const pages = Math.max(1, Math.ceil(total / PER_PAGE));
+  PAGE = Math.min(PAGE, pages);
+  const slice = filtered.slice((PAGE-1)*PER_PAGE, PAGE*PER_PAGE);
+
+  tbody.innerHTML = slice.map(a => `
+    <tr id="row-${a.id}">
+      <td class="check-col"><input type="checkbox" value="${a.id}" class="row-check"></td>
+      <td>${a.image
+        ? `<img class="img-thumb" src="${a.image}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" loading="lazy"><div class="img-placeholder" style="display:none">🖼</div>`
+        : `<div class="img-placeholder">—</div>`}</td>
+      <td title="${a.title}"><a href="${a.url}" target="_blank" style="color:#2b6cb0;text-decoration:none">${a.title.substring(0,60)}${a.title.length>60?"…":""}</a></td>
+      <td><span class="cat-badge cat-${a.cat}">${CAT_TH[a.cat]||a.cat}</span></td>
+      <td><span class="source-tag">${a.source}</span></td>
+      <td>${a.date||"—"}</td>
+      <td style="text-align:center">${a.lat&&a.lng?"📍":"—"}</td>
+      <td>
+        <div class="action-btns">
+          <button class="btn btn-primary btn-sm" onclick="editArticle('${a.id}')">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteArticle('${a.id}')">🗑</button>
+        </div>
+      </td>
+    </tr>
+  `).join("");
+
+  // Pagination
+  document.getElementById("page-info").textContent = `แสดง ${(PAGE-1)*PER_PAGE+1}–${Math.min(PAGE*PER_PAGE,total)} จาก ${total} รายการ`;
+  const pg = document.getElementById("pagination");
+  let html = "";
+  for (let i=1; i<=pages; i++) {
+    if (pages > 10 && i > 3 && i < pages-2 && Math.abs(i-PAGE) > 1) {
+      if (i===4 || i===pages-2) html += `<span class="page-btn" style="cursor:default">…</span>`;
+      continue;
+    }
+    html += `<button class="page-btn${i===PAGE?" active":""}" onclick="goPage(${i})">${i}</button>`;
+  }
+  pg.innerHTML = html;
+}
+
+function goPage(p) { PAGE = p; renderTable(); }
+
+function toggleAll(cb) {
+  document.querySelectorAll(".row-check").forEach(c => c.checked = cb.checked);
+}
+
+function deleteSelected() {
+  const ids = [...document.querySelectorAll(".row-check:checked")].map(c => c.value);
+  if (!ids.length) return showToast("⚠️ ยังไม่ได้เลือกบทความ", "error");
+  if (!confirm(`ลบ ${ids.length} บทความ?`)) return;
+  ARTICLES = ARTICLES.filter(a => !ids.includes(a.id));
+  updateStats();
+  filterArticles();
+  showToast(`🗑 ลบแล้ว ${ids.length} บทความ`);
+}
+
+function deleteArticle(id) {
+  if (!confirm("ลบบทความนี้?")) return;
+  ARTICLES = ARTICLES.filter(a => a.id !== id);
+  updateStats();
+  filterArticles();
+  showToast("🗑 ลบแล้ว");
+}
+
+// ══════════════════════════════════════════════
+//  Add / Edit form
+// ══════════════════════════════════════════════
+function populateSourceFilter() {
+  const srcs = [...new Set(ARTICLES.map(a => a.source))].sort();
+  const sel = document.getElementById("filter-source");
+  srcs.forEach(s => { const o=document.createElement("option"); o.value=o.textContent=s; sel.appendChild(o); });
+}
+
+function populateSiteSelect() {
+  const sel = document.getElementById("f-source");
+  sel.innerHTML = "";
+  SITES.forEach(s => {
+    const o = document.createElement("option");
+    o.value = s.id;
+    o.textContent = `${s.id} — ${s.name_th||""}`;
+    sel.appendChild(o);
+  });
+  // fallback: sources from articles
+  if (!SITES.length) {
+    const srcs = [...new Set(ARTICLES.map(a => a.source))].sort();
+    srcs.forEach(s => { const o=document.createElement("option"); o.value=o.textContent=s; sel.appendChild(o); });
+  }
+}
+
+function makeId(source, url) {
+  // Simple hash
+  let h = 0;
+  for (let i=0; i<url.length; i++) { h = ((h<<5)-h) + url.charCodeAt(i); h |= 0; }
+  return source + "_" + Math.abs(h).toString(16).substring(0,8);
+}
+
+function clearForm() {
+  ["f-title","f-url","f-excerpt","f-image","f-date","f-lat","f-lng","f-tags"].forEach(id => {
+    document.getElementById(id).value = "";
+  });
+  document.getElementById("f-cat").value = "research";
+  document.getElementById("f-edit-id").value = "";
+  document.getElementById("form-title").textContent = "➕ เพิ่มบทความใหม่";
+}
+
+function saveArticle() {
+  const title = document.getElementById("f-title").value.trim();
+  const url   = document.getElementById("f-url").value.trim();
+  if (!title || !url) return showToast("⚠️ กรุณาใส่ชื่อบทความและ URL", "error");
+
+  const editId = document.getElementById("f-edit-id").value;
+  const source = document.getElementById("f-source").value;
+  const art = {
+    id:      editId || makeId(source, url),
+    source,
+    cat:     document.getElementById("f-cat").value,
+    title,
+    excerpt: document.getElementById("f-excerpt").value.trim(),
+    url,
+    date:    document.getElementById("f-date").value || new Date().toISOString().slice(0,10),
+    tags:    document.getElementById("f-tags").value.split(",").map(t=>t.trim()).filter(Boolean),
+    image:   document.getElementById("f-image").value.trim() || null,
+    lat:     parseFloat(document.getElementById("f-lat").value) || null,
+    lng:     parseFloat(document.getElementById("f-lng").value) || null,
+  };
+
+  if (editId) {
+    const idx = ARTICLES.findIndex(a => a.id === editId);
+    if (idx >= 0) ARTICLES[idx] = art;
+  } else {
+    if (ARTICLES.find(a => a.url === url)) return showToast("⚠️ URL นี้มีอยู่แล้ว", "error");
+    ARTICLES.unshift(art);
+  }
+
+  updateStats();
+  filterArticles();
+  clearForm();
+  showToast(editId ? "✅ แก้ไขบทความแล้ว" : "✅ เพิ่มบทความแล้ว");
+  showSection("articles");
+}
+
+function editArticle(id) {
+  const a = ARTICLES.find(x => x.id === id);
+  if (!a) return;
+  document.getElementById("f-title").value   = a.title || "";
+  document.getElementById("f-url").value     = a.url || "";
+  document.getElementById("f-excerpt").value = a.excerpt || "";
+  document.getElementById("f-image").value   = a.image || "";
+  document.getElementById("f-date").value    = a.date || "";
+  document.getElementById("f-lat").value     = a.lat || "";
+  document.getElementById("f-lng").value     = a.lng || "";
+  document.getElementById("f-tags").value    = (a.tags||[]).join(", ");
+  document.getElementById("f-cat").value     = a.cat || "research";
+  document.getElementById("f-source").value  = a.source || "";
+  document.getElementById("f-edit-id").value = a.id;
+  document.getElementById("form-title").textContent = "✏️ แก้ไขบทความ";
+  showSection("add");
+}
+
+// ══════════════════════════════════════════════
+//  Sites table
+// ══════════════════════════════════════════════
+const REGION_TH = {north:"ภาคเหนือ",northeast:"ภาคอีสาน",south:"ภาคใต้",central:"ภาคกลาง",east:"ภาคตะวันออก",west:"ภาคตะวันตก"};
+
+function renderSites() {
+  const artCount = {};
+  ARTICLES.forEach(a => { artCount[a.source] = (artCount[a.source]||0)+1; });
+  const tbody = document.getElementById("sites-tbody");
+  tbody.innerHTML = SITES.map((s,i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><code style="font-size:.8rem">${s.id}</code></td>
+      <td>${s.name_th||"—"}</td>
+      <td style="color:#718096;font-size:.82rem">${s.name_en||"—"}</td>
+      <td><span style="font-size:.8rem;background:#edf2f7;padding:2px 8px;border-radius:99px">${REGION_TH[s.region]||s.region||"—"}</span></td>
+      <td style="font-weight:700;color:#2b6cb0">${artCount[s.id]||0}</td>
+      <td><a href="${s.url}" target="_blank" style="color:#4299e1;font-size:.82rem">🔗 เปิด</a></td>
+    </tr>
+  `).join("");
+}
+
+// ══════════════════════════════════════════════
+//  Import / Export
+// ══════════════════════════════════════════════
+function exportJSON() {
+  const json = JSON.stringify(ARTICLES, null, 2);
+  const blob = new Blob([json], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `articles_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  showToast("📤 Export สำเร็จ");
+}
+
+function showJsonEditor() {
+  const wrap = document.getElementById("json-editor-wrap");
+  wrap.style.display = wrap.style.display === "none" ? "block" : "none";
+  document.getElementById("json-editor").value = JSON.stringify(ARTICLES, null, 2);
+}
+
+function importFromEditor() {
+  try {
+    const arr = JSON.parse(document.getElementById("json-editor").value);
+    if (!Array.isArray(arr)) throw new Error("ต้องเป็น Array");
+    mergeArticles(arr);
+    document.getElementById("json-editor-wrap").style.display = "none";
+  } catch(e) {
+    showToast("❌ JSON ไม่ถูกต้อง: " + e.message, "error");
+  }
+}
+
+function importFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const arr = JSON.parse(e.target.result);
+      if (!Array.isArray(arr)) throw new Error("ต้องเป็น Array");
+      mergeArticles(arr);
+    } catch(err) {
+      showToast("❌ ไฟล์ JSON ไม่ถูกต้อง: " + err.message, "error");
+    }
+  };
+  reader.readAsText(file);
+}
+
+function mergeArticles(incoming) {
+  const existingIds  = new Set(ARTICLES.map(a => a.id));
+  const existingUrls = new Set(ARTICLES.map(a => a.url));
+  let added = 0;
+  incoming.forEach(a => {
+    if (!existingIds.has(a.id) && !existingUrls.has(a.url)) {
+      ARTICLES.unshift(a);
+      existingIds.add(a.id);
+      existingUrls.add(a.url);
+      added++;
+    }
+  });
+  updateStats();
+  filterArticles();
+  showToast(`📥 นำเข้าแล้ว ${added} บทความใหม่ (ซ้ำ ${incoming.length-added})`);
+}
+
+// Drag & drop
+const dz = document.getElementById("drop-zone");
+dz.addEventListener("dragover", e => { e.preventDefault(); dz.classList.add("drag-over"); });
+dz.addEventListener("dragleave", () => dz.classList.remove("drag-over"));
+dz.addEventListener("drop", e => {
+  e.preventDefault();
+  dz.classList.remove("drag-over");
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    const inp = document.getElementById("file-input");
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    inp.files = dt.files;
+    importFile(inp);
+  }
+});
+
+// ══════════════════════════════════════════════
+//  Save to HTML
+// ══════════════════════════════════════════════
+function saveToHTML() {
+  // Can only generate a downloadable HTML with the new data embedded
+  showToast("⏳ กำลังสร้างไฟล์…");
+  fetch("index.html")
+    .then(r => r.text())
+    .then(html => {
+      const newJson = JSON.stringify(ARTICLES, null, 2);
+      const newTag  = `<script id="ARTICLES_DATA" type="application/json">\n${newJson}\n<\/script>`;
+      const updated = html.replace(
+        /<script id="ARTICLES_DATA" type="application\/json">[\s\S]*?<\/script>/,
+        newTag
+      );
+      const blob = new Blob([updated], {type:"text/html"});
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "index.html";
+      a.click();
+      showToast("💾 ดาวน์โหลด index.html แล้ว — นำไปแทนที่ไฟล์เดิม");
+    })
+    .catch(() => {
+      // Fallback: just export JSON
+      exportJSON();
+      showToast("⚠️ ไม่สามารถแก้ไข HTML โดยตรงได้ — Export JSON แทน", "error");
+    });
+}
+
+// ══════════════════════════════════════════════
+//  Toast
+// ══════════════════════════════════════════════
+let toastTimer;
+function showToast(msg, type="success") {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "show" + (type==="error"?" error":"");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = "", 3000);
+}
+
+// ══════════════════════════════════════════════
+//  Init
+// ══════════════════════════════════════════════
+loadFromIndexHTML();
+</script>
+</body>
+</html>
