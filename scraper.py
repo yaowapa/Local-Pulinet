@@ -139,6 +139,16 @@ def scrape_html_links(site: dict) -> list:
             if not is_local_content(text):
                 continue
             seen.add(href)
+            # ลองดึง og:image จากหน้าบทความ
+            img = None
+            try:
+                ar = requests.get(href, headers=HEADERS, timeout=8)
+                asoup = BeautifulSoup(ar.text, "html.parser")
+                og = asoup.find("meta", property="og:image") or asoup.find("meta", attrs={"name":"og:image"})
+                if og and og.get("content","").startswith("http"):
+                    img = og["content"]
+            except Exception:
+                pass
             results.append({
                 "id":      make_id(site["id"], href),
                 "source":  site["id"],
@@ -148,6 +158,7 @@ def scrape_html_links(site: dict) -> list:
                 "url":     href,
                 "date":    datetime.now().strftime("%Y-%m-%d"),
                 "tags":    [],
+                "image":   img,
                 "lat":     site.get("default_lat"),
                 "lng":     site.get("default_lng"),
             })
@@ -252,7 +263,14 @@ def main():
     # โหลด articles ปัจจุบัน (เพื่อ merge ไม่ให้ซ้ำ)
     m2 = re.search(r'<script id="ARTICLES_DATA" type="application/json">\s*(\[.*?\])\s*</script>',
                    html, re.DOTALL)
-    existing = json.loads(m2.group(1)) if m2 else []
+    existing_all = json.loads(m2.group(1)) if m2 else []
+
+    # ล้างบทความที่ไม่เกี่ยวข้องออกจากข้อมูลเก่า
+    existing = [a for a in existing_all if is_local_content(a.get("title","")) or a.get("pin")]
+    removed = len(existing_all) - len(existing)
+    if removed:
+        print(f"   🧹 ลบบทความไม่เกี่ยวข้องออก {removed} ชิ้น")
+
     existing_ids = {a["id"] for a in existing}
     existing_urls = {a["url"] for a in existing}
 
